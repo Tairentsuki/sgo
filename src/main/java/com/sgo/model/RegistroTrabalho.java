@@ -57,4 +57,6 @@ public class RegistroTrabalho {
     public boolean isPago() {
         return pagamento != null;
     }
+
+
 }

@@ -54,4 +54,11 @@ public class FuncionarioService {
     public List<HistoricoValorHora> listarHistorico(Long funcionarioId) {
         return historicoRepo.findByFuncionarioIdOrderByDataAlteracaoDesc(funcionarioId);
     }
+
+    @Transactional
+    public void trocarStatus(Long id) {
+        Funcionario funcionario = buscarPorId(id);
+        funcionario.setAtivo(!funcionario.isAtivo());
+        funcionarioRepo.save(funcionario);
+    }
 }

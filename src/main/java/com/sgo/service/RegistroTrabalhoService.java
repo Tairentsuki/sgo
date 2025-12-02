@@ -17,10 +17,8 @@ public class RegistroTrabalhoService {
 
     @Transactional
     public RegistroTrabalho lancarHoras(RegistroTrabalho registro) {
-        // Busca o funcionário para garantir o valor atualizado
         Funcionario func = funcionarioService.buscarPorId(registro.getFuncionario().getId());
 
-        // Regra Crucial: Snapshot do valor da hora no momento do lançamento
         registro.setValorHoraSnapshot(func.getValorHoraAtual());
         registro.setTotalCalculado(registro.getHoras().multiply(registro.getValorHoraSnapshot()));
 
@@ -33,5 +31,10 @@ public class RegistroTrabalhoService {
 
     public List<RegistroTrabalho> buscarPorFuncionario(Long funcionarioId) {
         return registroRepo.findByFuncionarioIdOrderByDataDesc(funcionarioId);
+    }
+
+    public RegistroTrabalho buscarPorId(Long id) {
+        return registroRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Registro não encontrado"));
     }
 }

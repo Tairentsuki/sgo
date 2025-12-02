@@ -7,7 +7,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold text-dark mb-0">Apontamentos</h2>
-            <p class="text-muted mb-0">Controle de horas e pagamentos</p>
+            <p class="text-muted mb-0">Histórico de horas lançadas</p>
         </div>
         <a href="/registros/novo" class="btn btn-primary shadow-sm">
             <i class="bi bi-plus-lg me-2"></i> Lançar Horas
@@ -34,61 +34,69 @@
         </div>
     </div>
 
-    <form action="/pagamentos/efetuar" method="post">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold text-secondary">Histórico de Lançamentos</h6>
-                <button type="submit" class="btn btn-success btn-sm text-white fw-bold" onclick="return confirm('Confirma o pagamento?')">
-                    <i class="bi bi-check2-all me-2"></i> Pagar Selecionados
-                </button>
-            </div>
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">Data</th>
+                    <th>Funcionário</th>
+                    <th>Obra / Detalhe</th>
+                    <th>Horas</th>
+                    <th>Total</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-end pe-4">Ações</th> </tr>
+                </thead>
+                <tbody>
+                <tr th:each="reg : ${registros}">
+                    <td class="ps-4">
+                        <span class="fw-bold text-dark" th:text="${#temporals.format(reg.data, 'dd/MM/yyyy')}">01/01</span>
+                    </td>
+                    <td>
+                        <div class="fw-bold text-dark" th:text="${reg.funcionario.nome}">João</div>
+                        <small class="text-muted" th:text="${reg.funcionario.profissao}">Pedreiro</small>
+                    </td>
+                    <td>
+                        <div class="fw-bold" style="font-size: 0.9rem;" th:text="${reg.obra.nome}">Obra</div>
+                        <small class="text-muted text-truncate d-inline-block" style="max-width: 150px;" th:text="${reg.observacao}">Obs</small>
+                    </td>
+                    <td>
+                        <span class="badge bg-light text-dark border" th:text="${reg.horas} + ' h'">8 h</span>
+                    </td>
+                    <td class="fw-bold text-dark">R$ <span th:text="${#numbers.formatDecimal(reg.totalCalculado, 1, 'POINT', 2, 'COMMA')}">400,00</span></td>
 
-            <div class="card-body p-0">
-                <table class="table table-hover mb-0 align-middle">
-                    <thead class="bg-light">
-                    <tr>
-                        <th class="text-center" style="width: 50px;"><i class="bi bi-check-square"></i></th>
-                        <th class="ps-3">Data</th>
-                        <th>Funcionário</th>
-                        <th>Obra / Serviço</th>
-                        <th>Horas</th>
-                        <th>Total</th>
-                        <th class="text-end pe-4">Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="reg : ${registros}">
-                        <td class="text-center">
-                            <input th:unless="${reg.isPago()}" class="form-check-input" type="checkbox" name="ids" th:value="${reg.id}">
-                        </td>
+                    <td class="text-center">
+                        <span th:if="${reg.isPago()}" class="badge badge-soft-success border border-success">
+                            <i class="bi bi-check-circle me-1"></i> Pago
+                        </span>
+                        <span th:unless="${reg.isPago()}" class="badge badge-soft-warning border border-warning text-dark">
+                            <i class="bi bi-hourglass-split me-1"></i> Pendente
+                        </span>
+                    </td>
 
-                        <td class="ps-3">
-                            <span class="fw-bold text-dark" th:text="${#temporals.format(reg.data, 'dd/MM/yyyy')}">01/01</span>
-                        </td>
-                        <td>
-                            <div class="fw-bold text-dark" th:text="${reg.funcionario.nome}">João</div>
-                            <small class="text-muted" th:text="${reg.funcionario.profissao}">Pedreiro</small>
-                        </td>
-                        <td>
-                            <div class="fw-bold" style="font-size: 0.9rem;" th:text="${reg.obra.nome}">Obra</div>
-                            <small class="text-muted text-truncate d-inline-block" style="max-width: 150px;" th:text="${reg.observacao}">Obs</small>
-                        </td>
-                        <td><span class="badge bg-light text-dark border" th:text="${reg.horas} + ' h'">8 h</span></td>
-                        <td class="fw-bold text-dark">R$ <span th:text="${reg.totalCalculado}">400.00</span></td>
+                    <td class="text-end pe-4">
+                        <a th:if="${!reg.isPago()}"
+                           th:href="@{/registros/editar/{id}(id=${reg.id})}"
+                           class="btn btn-sm btn-outline-primary"
+                           title="Editar Apontamento">
+                            <i class="bi bi-pencil"></i>
+                        </a>
 
-                        <td class="text-end pe-4">
-                            <span th:if="${reg.isPago()}" class="badge badge-soft-success border border-success"><i class="bi bi-check-circle me-1"></i> Pago</span>
-                            <span th:unless="${reg.isPago()}" class="badge badge-soft-warning border border-warning text-dark"><i class="bi bi-hourglass-split me-1"></i> Pendente</span>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(registros)}">
-                        <td colspan="7" class="text-center py-5 text-muted">Nenhum registro encontrado.</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+                        <span th:if="${reg.isPago()}" class="text-muted" title="Registro pago (bloqueado)">
+                            <i class="bi bi-lock-fill"></i>
+                        </span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(registros)}">
+                    <td colspan="7" class="text-center py-5 text-muted">
+                        <i class="bi bi-clipboard-x fs-1 d-block mb-3"></i>
+                        Nenhum registro encontrado.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-    </form>
+    </div>
 </div>
 </body>
 </html>

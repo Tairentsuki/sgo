@@ -60,4 +60,18 @@ public class RegistroTrabalhoController {
         model.addAttribute("funcionarios", funcionarioRepository.findByAtivoTrue());
         model.addAttribute("obras", obraRepository.findAllByOrderByIdDesc());
     }
+
+    @GetMapping("/editar/{id}")
+    public String editar(@PathVariable Long id, Model model) {
+        RegistroTrabalho registro = service.buscarPorId(id);
+
+        // Regra de Segurança: Não permitir editar se já estiver pago
+        if (registro.isPago()) {
+            throw new RuntimeException("Não é possível editar um registro já pago.");
+        }
+
+        model.addAttribute("registro", registro);
+        carregarCombos(model); // Carrega a lista de funcionários/obras
+        return "registro-form";
+    }
 }

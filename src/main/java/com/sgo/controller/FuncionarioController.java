@@ -55,4 +55,11 @@ public class FuncionarioController {
         model.addAttribute("historico", service.listarHistorico(id));
         return "funcionario-detalhes";
     }
+
+    @GetMapping("/status/{id}")
+    public String trocarStatus(@PathVariable Long id, RedirectAttributes attributes) {
+        service.trocarStatus(id);
+        attributes.addFlashAttribute("mensagem", "Status do funcionário alterado com sucesso!");
+        return "redirect:/funcionarios";
+    }
 }
