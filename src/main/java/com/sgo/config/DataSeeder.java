@@ -79,19 +79,19 @@ public class DataSeeder implements CommandLineRunner {
         Cliente cli3 = novoCliente("Construtora Horizonte", "11222333000100", "Rodovia BR 101, Km 50");
         Cliente cli4 = novoCliente("Dr. Roberto Mendes", "11122233344", "Rua da Praia, 200");
 
-        Funcionario func1 = novoFuncionario("Carlos Engenheiro", "Engenheiro Civil", "10000000001",
+        Funcionario func1 = novoFuncionario("Carlos", "Engenheiro Civil", "10000000001",
                 LocalDate.of(2023, 1, 10), BigDecimal.valueOf(150.00));
-        Funcionario func2 = novoFuncionario("Mariana Arquiteta", "Arquiteta", "10000000002",
+        Funcionario func2 = novoFuncionario("Mariana", "Arquiteta", "10000000002",
                 LocalDate.of(2023, 3, 15), BigDecimal.valueOf(130.00));
-        Funcionario func3 = novoFuncionario("João Mestre", "Mestre de Obras", "10000000003",
+        Funcionario func3 = novoFuncionario("João", "Mestre de Obras", "10000000003",
                 LocalDate.of(2023, 2, 1), BigDecimal.valueOf(70.00));
-        Funcionario func4 = novoFuncionario("Pedro Pedreiro", "Pedreiro", "10000000004",
+        Funcionario func4 = novoFuncionario("Pedro", "Pedreiro", "10000000004",
                 LocalDate.of(2023, 5, 20), BigDecimal.valueOf(40.00));
-        Funcionario func5 = novoFuncionario("Lucas Servente", "Servente", "10000000006",
+        Funcionario func5 = novoFuncionario("Lucas", "Servente", "10000000006",
                 LocalDate.of(2024, 1, 10), BigDecimal.valueOf(25.00));
-        Funcionario func6 = novoFuncionario("Beto Eletricista", "Eletricista", "10000000009",
+        Funcionario func6 = novoFuncionario("Beto", "Eletricista", "10000000009",
                 LocalDate.of(2023, 11, 11), BigDecimal.valueOf(60.00));
-        Funcionario func7 = novoFuncionario("Zé Encanador", "Encanador", "10000000010",
+        Funcionario func7 = novoFuncionario("Felipe", "Encanador", "10000000010",
                 LocalDate.of(2023, 10, 10), BigDecimal.valueOf(55.00));
 
         Obra obra1 = novaObra("Expansão Shopping Plaza", "Av. Nações, 1000", StatusObra.ANDAMENTO, cli1);
