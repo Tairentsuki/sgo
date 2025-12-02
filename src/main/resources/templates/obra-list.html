@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::content})}">
+<body>
+<div th:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-0">Obras</h2>
+            <p class="text-muted mb-0">Projetos em andamento</p>
+        </div>
+        <a href="/obras/novo" class="btn btn-primary shadow-sm">
+            <i class="bi bi-plus-lg me-2"></i> Nova Obra
+        </a>
+    </div>
+
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-body py-3">
+            <form action="/obras" method="get" class="row g-2 align-items-center">
+
+                <div class="col-md-3">
+                    <select name="status" class="form-select border-0 bg-light fw-bold text-secondary" onchange="this.form.submit()">
+                        <option value="">Todos os Status</option>
+                        <option th:each="st : ${T(com.sgo.model.StatusObra).values()}"
+                                th:value="${st}" th:text="${st}" th:selected="${st == statusAtual}"></option>
+                    </select>
+                </div>
+
+                <div class="col-md">
+                    <div class="input-group">
+                        <span class="input-group-text border-0 bg-light"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" name="busca" class="form-control border-0 bg-light"
+                               placeholder="Buscar obra por nome..." th:value="${buscaAtual}">
+                        <button type="submit" class="btn btn-dark">Filtrar</button>
+                    </div>
+                </div>
+
+                <div class="col-auto" th:if="${buscaAtual != null or statusAtual != null}">
+                    <a href="/obras" class="btn btn-outline-secondary" title="Limpar Filtros">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">Obra</th>
+                    <th>Cliente</th>
+                    <th>Endereço</th>
+                    <th>Início</th>
+                    <th>Status</th>
+                    <th class="text-end pe-4">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="obra : ${obras}">
+                    <td class="ps-4 fw-bold text-dark" th:text="${obra.nome}">Nome</td>
+                    <td th:text="${obra.cliente != null} ? ${obra.cliente.nome} : '-'">Cliente</td>
+                    <td class="text-truncate" style="max-width: 200px;" th:text="${obra.endereco}">End</td>
+                    <td>
+                        <div th:if="${obra.dataInicio != null}" class="small">
+                            <i class="bi bi-calendar"></i> <span th:text="${#temporals.format(obra.dataInicio, 'dd/MM/yyyy')}"></span>
+                        </div>
+                        <span th:unless="${obra.dataInicio != null}" class="text-muted small fst-italic">--</span>
+                    </td>
+                    <td>
+                        <span th:if="${obra.status.name() == 'ORCAMENTO'}" class="badge badge-soft-warning">Orçamento</span>
+                        <span th:if="${obra.status.name() == 'ANDAMENTO'}" class="badge badge-soft-primary">Andamento</span>
+                        <span th:if="${obra.status.name() == 'CONCLUIDA'}" class="badge badge-soft-success">Concluída</span>
+                        <span th:if="${obra.status.name() == 'CANCELADA'}" class="badge badge-soft-danger">Cancelada</span>
+                    </td>
+                    <td class="text-end pe-4">
+                        <a th:href="@{/obras/editar/{id}(id=${obra.id})}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(obras)}">
+                    <td colspan="6" class="text-center py-5 text-muted">Nenhuma obra encontrada.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

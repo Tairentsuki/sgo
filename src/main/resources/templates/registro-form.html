@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::content})}">
+<body>
+<div th:fragment="content">
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-warning border-top border-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-clock-history"></i> Lançamento de Horas</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/registros/salvar}" th:object="${registro}" method="post">
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Funcionário</label>
+                                <select class="form-select" th:field="*{funcionario}" required>
+                                    <option value="">Selecione...</option>
+                                    <option th:each="f : ${funcionarios}" th:value="${f.id}" th:text="${f.nome} + ' (R$ ' + ${f.valorHoraAtual} + '/h)'"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Obra</label>
+                                <select class="form-select" th:field="*{obra}" required>
+                                    <option value="">Selecione...</option>
+                                    <option th:each="o : ${obras}" th:value="${o.id}" th:text="${o.nome}"></option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Data</label>
+                                <input type="date" class="form-control" th:field="*{data}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Qtd. Horas</label>
+                                <input type="number" step="0.5" class="form-control" th:field="*{horas}" required>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Observação (Diário de Obra)</label>
+                                <textarea class="form-control" th:field="*{observacao}" rows="3" placeholder="Descrição do serviço realizado..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-light border mt-4">
+                            <small class="text-muted"><i class="bi bi-shield-lock"></i> O valor da hora será congelado (Snapshot) com base no salário atual.</small>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="/registros" class="btn btn-light border">Cancelar</a>
+                            <button type="submit" class="btn btn-warning px-4">Lançar Horas</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

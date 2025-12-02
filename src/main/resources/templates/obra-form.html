@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::content})}">
+<body>
+<div th:fragment="content">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-building"></i> Dados da Obra</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/obras/salvar}" th:object="${obra}" method="post">
+                        <input type="hidden" th:field="*{id}">
+
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Nome do Projeto</label>
+                                <input type="text" class="form-control" th:field="*{nome}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Cliente</label>
+                                <select class="form-select" th:field="*{cliente}" required>
+                                    <option value="">Selecione...</option>
+                                    <option th:each="cli : ${clientes}" th:value="${cli.id}" th:text="${cli.nome}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" th:field="*{status}">
+                                    <option th:each="st : ${listaStatus}" th:value="${st}" th:text="${st}"></option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Endereço</label>
+                                <input type="text" class="form-control" th:field="*{endereco}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Data Início</label>
+                                <input type="date" class="form-control" th:field="*{dataInicio}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Previsão Término</label>
+                                <input type="date" class="form-control" th:field="*{dataFinal}">
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="/obras" class="btn btn-light border">Cancelar</a>
+                            <button type="submit" class="btn btn-primary px-4">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

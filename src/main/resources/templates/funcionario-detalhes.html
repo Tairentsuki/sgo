@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::content})}">
+<body>
+<div th:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">Detalhes do Funcionário</h2>
+        <a th:href="@{/funcionarios}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-5">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-bold text-secondary">Dados Cadastrais</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="text-muted small text-uppercase fw-bold">Nome</label>
+                        <p class="fs-5 fw-bold text-dark mb-0" th:text="${funcionario.nome}">Nome</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-muted small text-uppercase fw-bold">CPF</label>
+                        <p class="mb-0" th:text="${funcionario.cpf}">CPF</p>
+                    </div>
+                    <div class="p-3 bg-light rounded border mt-2">
+                        <label class="text-muted small text-uppercase fw-bold">Valor Hora Atual</label>
+                        <h3 class="text-success fw-bold mb-0">
+                            R$ <span th:text="${funcionario.valorHoraAtual}">0.00</span>
+                            <small class="text-muted fs-6">/h</small>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-bold text-secondary">Histórico de Valor Hora</h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Data</th>
+                            <th>De</th>
+                            <th>Para</th>
+                            <th class="pe-4">Motivo</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="hist : ${historico}">
+                            <td class="ps-4"
+                                th:text="${#temporals.format(hist.dataAlteracao, 'dd/MM/yyyy HH:mm')}">
+                                Data
+                            </td>
+                            <td class="text-muted text-decoration-line-through">
+                                R$ <span th:text="${hist.valorAntigo}">0.00</span>
+                            </td>
+                            <td class="fw-bold text-success">
+                                R$ <span th:text="${hist.valorNovo}">0.00</span>
+                            </td>
+                            <td class="pe-4 text-muted small" th:text="${hist.observacao}">Motivo</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(historico)}">
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                Nenhum histórico registrado.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

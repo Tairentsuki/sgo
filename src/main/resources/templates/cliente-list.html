@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::content})}">
+<body>
+<div th:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-0">Clientes</h2>
+            <p class="text-muted mb-0">Gestão de contratantes</p>
+        </div>
+        <a th:href="@{/clientes/novo}" class="btn btn-primary shadow-sm">
+            <i class="bi bi-person-plus-fill me-2"></i>
+            Novo Cliente
+        </a>
+    </div>
+
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-body py-3">
+            <form th:action="@{/clientes}" method="get" class="row g-2 align-items-center">
+                <div class="col-md-2">
+                    <select name="filtroStatus"
+                            class="form-select border-0 bg-light fw-bold text-secondary"
+                            onchange="this.form.submit()">
+                        <option value="ativos" th:selected="${statusAtual == 'ativos'}">Apenas Ativos</option>
+                        <option value="inativos" th:selected="${statusAtual == 'inativos'}">Apenas Inativos</option>
+                        <option value="todos" th:selected="${statusAtual == 'todos'}">Todos</option>
+                    </select>
+                </div>
+                <div class="col-md">
+                    <div class="input-group">
+                        <span class="input-group-text border-0 bg-light">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text"
+                               name="busca"
+                               class="form-control border-0 bg-light"
+                               placeholder="Buscar por nome ou razão social..."
+                               th:value="${buscaAtual}">
+                        <button type="submit" class="btn btn-dark">Buscar</button>
+                    </div>
+                </div>
+                <div class="col-auto"
+                     th:if="${buscaAtual != null or (statusAtual != null and statusAtual != 'ativos')}">
+                    <a th:href="@{/clientes}" class="btn btn-outline-secondary" title="Limpar Filtros">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">Nome</th>
+                    <th>CPF / CNPJ</th>
+                    <th>Contato</th>
+                    <th>Endereço</th>
+                    <th>Status</th>
+                    <th class="text-end pe-4">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="cli : ${clientes}">
+                    <td class="ps-4 fw-bold text-dark" th:text="${cli.nome}">Nome</td>
+                    <td th:text="${cli.cpf}">CPF</td>
+                    <td>
+                        <div th:text="${cli.telefone}">Tel</div>
+                        <small class="text-muted" th:text="${cli.email}">Email</small>
+                    </td>
+                    <td class="text-truncate" style="max-width: 200px;" th:text="${cli.endereco}">Endereço</td>
+                    <td>
+                        <span th:if="${cli.ativo}" class="badge badge-soft-success">Ativo</span>
+                        <span th:unless="${cli.ativo}" class="badge badge-soft-warning">Inativo</span>
+                    </td>
+                    <td class="text-end pe-4">
+                        <a th:href="@{/clientes/editar/{id}(id=${cli.id})}"
+                           class="btn btn-sm btn-outline-primary me-1">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a th:if="${cli.ativo}"
+                           th:href="@{/clientes/excluir/{id}(id=${cli.id})}"
+                           class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Inativar este cliente?')"
+                           title="Inativar">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(clientes)}">
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        Nenhum cliente encontrado com os filtros atuais.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

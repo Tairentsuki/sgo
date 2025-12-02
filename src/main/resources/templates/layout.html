@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SGO - Gestão Inteligente</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="brand">
+        <i class="bi bi-grid-1x2-fill text-primary"></i> SGO Pro
+        <button class="btn text-white ms-auto d-md-none" onclick="toggleMenu()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+
+    <div class="sidebar-menu">
+
+        <a href="/registros/novo" class="cta-button">
+            <i class="bi bi-plus-lg"></i> Lançar Horas
+        </a>
+
+        <div class="sidebar-title">Visão Geral</div>
+        <a href="/" class="nav-link" th:classappend="${currentUri == '/' ? 'active' : ''}">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a href="/relatorios" class="nav-link" th:classappend="${currentUri.startsWith('/relatorios') ? 'active' : ''}">
+            <i class="bi bi-pie-chart"></i> Relatórios
+        </a>
+
+        <div class="sidebar-title">Financeiro</div>
+        <a href="/pagamentos" class="nav-link" th:classappend="${currentUri.startsWith('/pagamentos') ? 'active' : ''}">
+            <i class="bi bi-cash-stack"></i> Pagamentos
+        </a>
+
+        <div class="sidebar-title">Cadastros</div>
+        <a href="/clientes" class="nav-link" th:classappend="${currentUri.startsWith('/clientes') ? 'active' : ''}">
+            <i class="bi bi-briefcase"></i> Clientes
+        </a>
+        <a href="/obras" class="nav-link" th:classappend="${currentUri.startsWith('/obras') ? 'active' : ''}">
+            <i class="bi bi-buildings"></i> Obras
+        </a>
+        <a href="/funcionarios" class="nav-link" th:classappend="${currentUri.startsWith('/funcionarios') ? 'active' : ''}">
+            <i class="bi bi-people"></i> Equipe
+        </a>
+
+        <div class="sidebar-title">Histórico</div>
+        <a href="/registros" class="nav-link" th:classappend="${currentUri.startsWith('/registros') ? 'active' : ''}">
+            <i class="bi bi-clock-history"></i> Apontamentos
+        </a>
+    </div>
+</nav>
+
+<main class="main-content">
+
+    <div class="d-flex align-items-center mb-4 d-md-none">
+        <button class="mobile-toggle" onclick="toggleMenu()">
+            <i class="bi bi-list"></i>
+        </button>
+        <h4 class="fw-bold m-0">SGO</h4>
+    </div>
+
+    <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show shadow-sm mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${mensagem}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show shadow-sm mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${erro}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:replace="${content}"></div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script th:src="@{/js/script.js}"></script>
+<script th:src="@{/js/dashboard.js}"></script>
+
+</body>
+</html>

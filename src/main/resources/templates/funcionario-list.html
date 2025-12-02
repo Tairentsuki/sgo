@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::content})}">
+<body>
+<div th:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-0">Funcionários</h2>
+            <p class="text-muted mb-0">Gestão de equipe</p>
+        </div>
+        <a th:href="@{/funcionarios/novo}" class="btn btn-primary shadow-sm">
+            <i class="bi bi-person-plus-fill me-2"></i>
+            Novo Funcionário
+        </a>
+    </div>
+
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-body py-3">
+            <form th:action="@{/funcionarios}" method="get" class="row g-2 align-items-center">
+                <div class="col-auto">
+                    <i class="bi bi-search text-muted"></i>
+                </div>
+                <div class="col">
+                    <input type="text"
+                           name="busca"
+                           class="form-control border-0 bg-light"
+                           placeholder="Buscar por nome..."
+                           th:value="${buscaAtual}">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-dark px-4">Filtrar</button>
+                    <a th:href="@{/funcionarios}" class="btn btn-outline-secondary ms-1"
+                       title="Limpar filtros">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">Nome / Cargo</th>
+                    <th>CPF</th>
+                    <th>Admissão</th>
+                    <th>Valor Hora</th>
+                    <th>Status</th>
+                    <th class="text-end pe-4">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="func : ${funcionarios}">
+                    <td class="ps-4">
+                        <div class="fw-bold text-dark" th:text="${func.nome}">Nome</div>
+                        <small class="text-muted" th:text="${func.profissao}">Cargo</small>
+                    </td>
+                    <td th:text="${func.cpf}">CPF</td>
+                    <td th:text="${#temporals.format(func.dataAdmissao, 'dd/MM/yyyy')}">Data</td>
+                    <td class="fw-bold text-success">
+                        R$ <span th:text="${func.valorHoraAtual}">0.00</span>
+                    </td>
+                    <td>
+                        <span th:if="${func.ativo}" class="badge badge-soft-success">Ativo</span>
+                        <span th:unless="${func.ativo}" class="badge badge-soft-warning">Inativo</span>
+                    </td>
+                    <td class="text-end pe-4">
+                        <a th:href="@{/funcionarios/detalhes/{id}(id=${func.id})}"
+                           class="btn btn-sm btn-outline-info me-1"
+                           title="Ver Histórico">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <a th:href="@{/funcionarios/editar/{id}(id=${func.id})}"
+                           class="btn btn-sm btn-outline-primary"
+                           title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(funcionarios)}">
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        Nenhum funcionário encontrado com o filtro atual.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

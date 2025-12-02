@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::content})}">
+<body>
+<div th:fragment="content">
+
+    <form action="/pagamentos/efetuar" method="post" id="formPagamento">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <a href="/pagamentos" class="text-decoration-none text-muted small mb-1 d-block"><i class="bi bi-arrow-left"></i> Voltar para Central</a>
+                <h2 class="fw-bold text-dark mb-0">Pagamento: <span class="text-primary" th:text="${funcionario.nome}">Nome</span></h2>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="selectAll" onchange="toggleAll(this)">
+                            <label class="form-check-label fw-bold user-select-none" for="selectAll">Selecionar Todos</label>
+                        </div>
+                        <span class="badge bg-light text-secondary border" th:text="${#lists.size(registros)} + ' itens disponíveis'"></span>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="bg-light">
+                            <tr>
+                                <th style="width: 50px;"></th>
+                                <th>Data</th>
+                                <th>Obra / Detalhe</th>
+                                <th class="text-end">Horas</th>
+                                <th class="text-end pe-4">Valor</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="reg : ${registros}" onclick="toggleRow(this)" style="cursor: pointer;">
+                                <td class="text-center">
+                                    <input class="form-check-input item-check" type="checkbox"
+                                           name="ids"
+                                           th:value="${reg.id}"
+                                           th:data-valor="${reg.totalCalculado}"
+                                           onclick="event.stopPropagation(); recalculate()">
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-dark" th:text="${#temporals.format(reg.data, 'dd/MM/yyyy')}">Data</span>
+                                    <small class="d-block text-muted" th:text="${#temporals.dayOfWeekName(reg.data)}">Segunda</small>
+                                </td>
+                                <td>
+                                    <div class="fw-bold" th:text="${reg.obra.nome}">Obra</div>
+                                    <small class="text-muted" th:text="${reg.observacao}">Obs</small>
+                                </td>
+                                <td class="text-end">
+                                    <span class="badge bg-light text-dark border" th:text="${reg.horas} + ' h'"></span>
+                                </td>
+                                <td class="text-end pe-4 fw-bold text-dark">
+                                    R$ <span th:text="${reg.totalCalculado}">0.00</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold text-secondary mb-4">Resumo do Pagamento</h5>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Itens selecionados:</span>
+                            <span class="fw-bold" id="totalCount">0</span>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between align-items-end mb-4">
+                            <span class="text-muted mb-1">Total a Pagar:</span>
+                            <h2 class="fw-bold text-success mb-0">R$ <span id="totalValue">0,00</span></h2>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold" id="btnPagar" disabled>
+                                <i class="bi bi-check-circle-fill me-2"></i> Confirmar Pagamento
+                            </button>
+                            <a href="/pagamentos" class="btn btn-light text-muted">Cancelar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        // Função para formatar moeda BR
+        const formatter = new Intl.NumberFormat('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        function recalculate() {
+            const checkboxes = document.querySelectorAll('.item-check');
+            let total = 0.0;
+            let count = 0;
+
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    // Pega o valor do atributo data-valor (que o Thymeleaf preencheu)
+                    total += parseFloat(cb.getAttribute('data-valor'));
+                    count++;
+                }
+            });
+
+            // Atualiza a tela
+            document.getElementById('totalValue').innerText = formatter.format(total);
+            document.getElementById('totalCount').innerText = count;
+
+            // Habilita/Desabilita botão
+            document.getElementById('btnPagar').disabled = (count === 0);
+        }
+
+        // Selecionar Tudo
+        function toggleAll(source) {
+            const checkboxes = document.querySelectorAll('.item-check');
+            checkboxes.forEach(cb => {
+                cb.checked = source.checked;
+            });
+            recalculate();
+        }
+
+        // Clicar na linha para marcar o checkbox (UX melhor)
+        function toggleRow(row) {
+            const cb = row.querySelector('.item-check');
+            cb.checked = !cb.checked;
+            recalculate();
+        }
+
+        // Roda uma vez ao carregar (para zerar ou somar se tiver pré-seleção)
+        document.addEventListener("DOMContentLoaded", recalculate);
+    </script>
+
+</div>
+</body>
+</html>
