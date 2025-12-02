@@ -25,14 +25,12 @@ public class HomeController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim,
             Model model) {
 
-        // Padrão: Início do ano até hoje
         if (inicio == null) inicio = LocalDate.now().with(TemporalAdjusters.firstDayOfYear());
         if (fim == null) fim = LocalDate.now();
 
         DashboardDTO dados = dashboardService.gerarDashboard(inicio, fim);
         model.addAttribute("dash", dados);
 
-        // Lista operacional (Diário) que fica abaixo dos gráficos
         model.addAttribute("ultimosRegistros", regRepo.findTop20ByOrderByDataDesc());
 
         return "home";

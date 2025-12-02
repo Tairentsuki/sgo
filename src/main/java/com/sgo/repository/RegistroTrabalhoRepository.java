@@ -24,7 +24,7 @@ public interface RegistroTrabalhoRepository extends JpaRepository<RegistroTrabal
     List<RegistroTrabalho> findAllByOrderByDataDesc();
     List<RegistroTrabalho> findByObraId(Long obraId);
 
-    // Diário do Dashboard (AQUI ESTAVA O ERRO: Mudamos de Top5 para Top20)
+    // Diário do Dashboard
     List<RegistroTrabalho> findTop20ByOrderByDataDesc();
 
     // --- Financeiro (Pagamentos) ---

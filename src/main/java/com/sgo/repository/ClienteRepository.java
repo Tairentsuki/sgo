@@ -12,7 +12,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     // Lista tudo ordenado (Recentes primeiro)
     List<Cliente> findAllByOrderByIdDesc();
 
-    // Busca por Nome [O QUE FALTOU E CAUSOU O ERRO]
+    // Busca por Nome
     List<Cliente> findByNomeContainingIgnoreCaseOrderByIdDesc(String nome);
 
     // Busca por Status
