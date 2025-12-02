@@ -49,13 +49,6 @@ public class RegistroTrabalhoController {
         return "registro-form";
     }
 
-    @PostMapping("/salvar")
-    public String salvar(RegistroTrabalho registro, RedirectAttributes attributes) {
-        service.lancarHoras(registro);
-        attributes.addFlashAttribute("mensagem", "Apontamento registrado com sucesso!");
-        return "redirect:/";
-    }
-
     private void carregarCombos(Model model) {
         model.addAttribute("funcionarios", funcionarioRepository.findByAtivoTrue());
         model.addAttribute("obras", obraRepository.findAllByOrderByIdDesc());
@@ -65,13 +58,32 @@ public class RegistroTrabalhoController {
     public String editar(@PathVariable Long id, Model model) {
         RegistroTrabalho registro = service.buscarPorId(id);
 
-        // Regra de Segurança: Não permitir editar se já estiver pago
         if (registro.isPago()) {
             throw new RuntimeException("Não é possível editar um registro já pago.");
         }
 
+        // CONVERSÃO: Prepara os campos separados para mostrar na tela
+        registro.carregarInputs();
+
         model.addAttribute("registro", registro);
-        carregarCombos(model); // Carrega a lista de funcionários/obras
+        carregarCombos(model);
         return "registro-form";
+    }
+
+    @PostMapping("/salvar")
+    public String salvar(RegistroTrabalho registro, RedirectAttributes attributes) {
+
+        // CONVERSÃO: Junta Horas + Minutos no BigDecimal final
+        registro.calcularDecimal();
+
+        // Validação simples manual (já que tiramos o @NotNull do campo principal)
+        if (registro.getHoras().compareTo(java.math.BigDecimal.ZERO) <= 0) {
+            attributes.addFlashAttribute("erro", "A quantidade de horas deve ser maior que zero.");
+            return "redirect:/registros/novo";
+        }
+
+        service.lancarHoras(registro);
+        attributes.addFlashAttribute("mensagem", "Apontamento registrado com sucesso!");
+        return "redirect:/";
     }
 }
